@@ -55,7 +55,7 @@ jobs:
     if: vars.DEPLOY_TO_EC2 == 'true'
 
     steps:
-      - name: Login into VM
+      - name: Login into VM & Deploy
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
