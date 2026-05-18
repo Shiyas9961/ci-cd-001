@@ -6,17 +6,6 @@ on:
   pull_request:
     branches: ["main"]
 
-  workflow_dispatch:
-    inputs:
-      deploy:
-        description: "Deploy to EC2?"
-        required: true
-        default: "false"
-        type: choice
-        options:
-          - "false"
-          - "true"
-
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
@@ -63,7 +52,7 @@ jobs:
   deploy-to-server:
     needs: docker-build-and-push
     runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch' && github.event.inputs.deploy == 'true'
+    if: vars.DEPLOY_TO_EC2 == 'true'
 
     steps:
       - name: Login into VM
