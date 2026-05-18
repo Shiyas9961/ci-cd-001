@@ -42,7 +42,7 @@ jobs:
 
       - name: Build Docker Image
         run: |
-          docker build -t "${{ secrets.DOCKER_HUB_USERNAME }}/ci-cd-react-app:latest"
+          docker build -t "${{ secrets.DOCKER_HUB_USERNAME }}/ci-cd-react-app:latest ."
       
       - name: Push to Docker Hub
         run: |
