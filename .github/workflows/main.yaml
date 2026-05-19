@@ -38,15 +38,20 @@ jobs:
       
       - name: Login into Docker Hub
         run: |
-          docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" -p "${{ secrets.DOCKER_HUB_TOKEN }}"
+          echo "${{ secrets.DOCKER_HUB_TOKEN }}" | docker login \
+            -u "${{ secrets.DOCKER_HUB_USERNAME }}" \
+            --password-stdin
 
       - name: Build Docker Image
         run: |
-          docker build -t "${{ secrets.DOCKER_HUB_USERNAME }}/ci-cd-react-app:latest" .
+          docker build \
+            -t "${{ secrets.DOCKER_HUB_USERNAME }}/ci-cd-react-app:latest" \
+            -t "${{ secrets.DOCKER_HUB_USERNAME }}/ci-cd-react-app:${{ github.sha }}" .
       
       - name: Push to Docker Hub
         run: |
           docker push "${{ secrets.DOCKER_HUB_USERNAME }}/ci-cd-react-app:latest"
+          docker push "${{ secrets.DOCKER_HUB_USERNAME }}/ci-cd-react-app:${{ github.sha }}"
 
 
   deploy-to-server:
@@ -70,9 +75,11 @@ jobs:
 
             docker run -d \
               --name react-app \
-              -p 80:80 \
+              -p 127.0.0.1:8080:80 \
               --restart unless-stopped \
               "${{ secrets.DOCKER_HUB_USERNAME }}/ci-cd-react-app:latest"
+
+            docker image prune -f
 
 
             
